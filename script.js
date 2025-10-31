@@ -22,6 +22,8 @@ const quizData = [
     { q: "網際網路的發展起源是", o: ["國防之需","學術界之需","商業界之需","以上皆非"], a: 0 }
 ];
 
+quizData.sort(() => Math.random() - 0.5);
+
 // ====================== 產生題目 ======================
 const form = document.getElementById('quizForm');
 
