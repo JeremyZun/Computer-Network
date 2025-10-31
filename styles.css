@@ -1,82 +1,66 @@
-/* styles.css */
+/* ---------- 基本排版 ---------- */
+* { box-sizing: border-box; margin:0; padding:0; }
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    text-align: center;
+    font-family: "Microsoft JhengHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #f0f4f8;
     color: #333;
+    line-height: 1.6;
 }
-
-p {
-    text-align: center;
-    color: #666;
+.container {
+    max-width: 860px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
 }
+h1 { text-align:center; margin-bottom:10px; color:#2c3e50; }
+p  { text-align:center; color:#555; margin-bottom:20px; }
 
-form {
-    margin-bottom: 20px;
-}
-
+/* ---------- 題目 ---------- */
 .question {
-    margin-bottom: 20px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
 }
-
 .question h3 {
-    margin-bottom: 10px;
-    color: #444;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #2c3e50;
 }
-
 .option {
-    margin-bottom: 10px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
 }
+.option input[type="radio"] { margin-right: 8px; }
 
-.option input {
-    margin-right: 10px;
-}
-
-button {
+/* ---------- 按鈕 ---------- */
+#submitBtn {
     display: block;
     width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
+    padding: 12px;
+    background: #3498db;
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
+    font-size: 1rem;
     cursor: pointer;
-    font-size: 16px;
+    transition: background .2s;
 }
+#submitBtn:hover { background:#2980b9; }
+#submitBtn:disabled { background:#95a5a6; cursor:not-allowed; }
 
-button:hover {
-    background-color: #45a049;
-}
-
+/* ---------- 結果 ---------- */
 #result {
-    margin-top: 20px;
+    margin-top: 25px;
     padding: 15px;
-    background-color: #e7f3ff;
-    border: 1px solid #b3d4fc;
-    border-radius: 5px;
-    display: none;
+    background: #e8f4fc;
+    border: 1px solid #b3e0ff;
+    border-radius: 6px;
 }
-
-.correct {
-    color: green;
-}
-
-.incorrect {
-    color: red;
-}
+#result h2 { margin-bottom:12px; color:#2c3e50; }
+#result p { margin:6px 0; }
+.correct   { color:#27ae60; font-weight:bold; }
+.incorrect { color:#e74c3c; font-weight:bold; }
+.hidden { display:none; }
