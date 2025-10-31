@@ -9,13 +9,17 @@
 <body>
     <div class="container">
         <h1>網路基本概念選擇題測驗</h1>
-        <p>共有20題，請選擇正確答案後提交。</p>
+        <p>共 20 題，請選出正確答案後點擊「提交答案」。</p>
+
         <form id="quizForm">
-            <!-- 題目將由JS動態生成 -->
+            <!-- 題目會在 script.js 中動態產生 -->
         </form>
-        <button id="submitBtn">提交答案</button>
-        <div id="result"></div>
+
+        <button id="submitBtn" type="button">提交答案</button>
+
+        <div id="result" class="hidden"></div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
