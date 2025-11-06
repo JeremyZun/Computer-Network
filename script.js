@@ -46,31 +46,197 @@ quizData.forEach((item, idx) => {
 // ====================== 提交 & 計分 ======================
 document.getElementById('submitBtn').addEventListener('click', () => {
     let correctCnt = 0;
-    let resultHTML = '<h2>測驗結果</h2>';
-
+    const userAnswers = [];
+    
+    // 收集用戶答案
     quizData.forEach((item, idx) => {
         const sel = document.querySelector(`input[name="q${idx}"]:checked`);
         const userAns = sel ? parseInt(sel.value) : -1;
-        const isCorrect = userAns === item.a;
-
-        if (isCorrect) correctCnt++;
-
-        resultHTML += `
-            <p>
-                <strong>${idx + 1}.</strong> ${item.q}<br>
-                <span class="${isCorrect ? 'correct' : 'incorrect'}">
-                    ${isCorrect ? '正確' : `錯誤（正確答案：(${item.a + 1}) ${item.o[item.a]}）`}
-                </span>
-            </p>`;
+        userAnswers.push(userAns);
+        
+        if (userAns === item.a) correctCnt++;
     });
-
-    const percent = Math.round((correctCnt / quizData.length) * 100);
-    resultHTML += `<h3>總分：${correctCnt} / ${quizData.length} （${percent}%）</h3>`;
-
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = resultHTML;
-    resultDiv.classList.remove('hidden');
-
+    
+    // 顯示優化後的結果
+    showEnhancedResults(correctCnt, userAnswers);
+    
     // 防止重複提交
     document.getElementById('submitBtn').disabled = true;
 });
+
+// ====================== 優化結果顯示 ======================
+function showEnhancedResults(correctCnt, userAnswers) {
+    const percent = Math.round((correctCnt / quizData.length) * 100);
+    const incorrectCnt = quizData.length - correctCnt;
+    
+    // 根據分數提供反饋
+    let feedback = "";
+    if (percent >= 90) {
+        feedback = "優秀！你對網路基本概念有很好的理解！";
+    } else if (percent >= 70) {
+        feedback = "不錯！繼續努力，你可以掌握得更好！";
+    } else if (percent >= 50) {
+        feedback = "及格！建議複習一下相關概念。";
+    } else {
+        feedback = "需要加強！建議重新學習網路基本概念。";
+    }
+    
+    // 生成結果HTML
+    let resultHTML = `
+        <div class="result-summary">
+            <div class="score-circle">
+                <div class="score">${correctCnt}</div>
+                <div class="total">/ ${quizData.length}</div>
+            </div>
+            <div class="score-percent">${percent}%</div>
+            <div class="score-feedback">${feedback}</div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: ${percent}%"></div>
+            </div>
+        </div>
+        
+        <div class="result-nav">
+            <button id="showAllBtn">全部題目</button>
+            <button id="showCorrectBtn">答對的題目 (${correctCnt})</button>
+            <button id="showIncorrectBtn">答錯的題目 (${incorrectCnt})</button>
+        </div>
+        
+        <div class="result-details">
+            <div class="result-section" id="allQuestions">
+                <h3>所有題目</h3>
+    `;
+    
+    // 生成所有題目的詳細結果
+    quizData.forEach((item, idx) => {
+        const userAns = userAnswers[idx];
+        const isCorrect = userAns === item.a;
+        const userAnswerText = userAns !== -1 ? `(${userAns + 1}) ${item.o[userAns]}` : "未作答";
+        const correctAnswerText = `(${item.a + 1}) ${item.o[item.a]}`;
+        
+        resultHTML += `
+            <div class="question-result ${isCorrect ? 'correct' : 'incorrect'}">
+                <div class="question-text">${idx + 1}. ${item.q}</div>
+                <div class="answer-comparison">
+                    <div class="answer-box user-answer">
+                        <div class="answer-label">你的答案</div>
+                        <div class="answer-text">${userAnswerText}</div>
+                    </div>
+                    ${!isCorrect ? `
+                    <div class="answer-box correct-answer">
+                        <div class="answer-label">正確答案</div>
+                        <div class="answer-text">${correctAnswerText}</div>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    });
+    
+    resultHTML += `
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">${correctCnt}</div>
+                    <div class="stat-label">答對題數</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${incorrectCnt}</div>
+                    <div class="stat-label">答錯題數</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${percent}%</div>
+                    <div class="stat-label">正確率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${quizData.length}</div>
+                    <div class="stat-label">總題數</div>
+                </div>
+            </div>
+            
+            <div class="retry-container">
+                <button id="retryBtn">重新測驗</button>
+            </div>
+        </div>
+    `;
+    
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = resultHTML;
+    resultDiv.classList.remove('hidden');
+    
+    // 添加結果導航功能
+    setupResultNavigation();
+    
+    // 添加重新測驗功能
+    document.getElementById('retryBtn').addEventListener('click', () => {
+        location.reload();
+    });
+    
+    // 滾動到結果區域
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ====================== 結果導航功能 ======================
+function setupResultNavigation() {
+    const allQuestionsSection = document.getElementById('allQuestions');
+    const showAllBtn = document.getElementById('showAllBtn');
+    const showCorrectBtn = document.getElementById('showCorrectBtn');
+    const showIncorrectBtn = document.getElementById('showIncorrectBtn');
+    
+    // 創建正確和錯誤題目部分
+    const correctQuestionsSection = document.createElement('div');
+    correctQuestionsSection.className = 'result-section hidden';
+    correctQuestionsSection.innerHTML = '<h3>答對的題目</h3>';
+    
+    const incorrectQuestionsSection = document.createElement('div');
+    incorrectQuestionsSection.className = 'result-section hidden';
+    incorrectQuestionsSection.innerHTML = '<h3>答錯的題目</h3>';
+    
+    // 將題目分類到正確的部分
+    const questionResults = document.querySelectorAll('.question-result');
+    questionResults.forEach(result => {
+        if (result.classList.contains('correct')) {
+            correctQuestionsSection.appendChild(result.cloneNode(true));
+        } else {
+            incorrectQuestionsSection.appendChild(result.cloneNode(true));
+        }
+    });
+    
+    // 將新部分添加到結果區域
+    allQuestionsSection.parentNode.insertBefore(correctQuestionsSection, allQuestionsSection.nextSibling);
+    correctQuestionsSection.parentNode.insertBefore(incorrectQuestionsSection, correctQuestionsSection.nextSibling);
+    
+    // 設置導航按鈕事件
+    showAllBtn.addEventListener('click', () => {
+        allQuestionsSection.classList.remove('hidden');
+        correctQuestionsSection.classList.add('hidden');
+        incorrectQuestionsSection.classList.add('hidden');
+        
+        showAllBtn.disabled = true;
+        showCorrectBtn.disabled = false;
+        showIncorrectBtn.disabled = false;
+    });
+    
+    showCorrectBtn.addEventListener('click', () => {
+        allQuestionsSection.classList.add('hidden');
+        correctQuestionsSection.classList.remove('hidden');
+        incorrectQuestionsSection.classList.add('hidden');
+        
+        showAllBtn.disabled = false;
+        showCorrectBtn.disabled = true;
+        showIncorrectBtn.disabled = false;
+    });
+    
+    showIncorrectBtn.addEventListener('click', () => {
+        allQuestionsSection.classList.add('hidden');
+        correctQuestionsSection.classList.add('hidden');
+        incorrectQuestionsSection.classList.remove('hidden');
+        
+        showAllBtn.disabled = false;
+        showCorrectBtn.disabled = false;
+        showIncorrectBtn.disabled = true;
+    });
+    
+    // 初始狀態為顯示所有題目
+    showAllBtn.disabled = true;
+}
